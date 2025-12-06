@@ -2,8 +2,6 @@
 
 一个基于 **AutoHotkey v2** 的轻量级窗口管理工具。可以为常用应用设置切换键，并实现同一应用的多窗口循环切换。
 
----
-
 ## ✨ 功能特性
 
 ### 🪟 1. 应用切换（App Switcher）
@@ -35,15 +33,11 @@
 
 便于长期维护，也方便二次开发。
 
----
-
 ## 📦 环境要求
 
 - Windows 10 / 11  
 - **AutoHotkey v2**（必须是 v2，v1 不兼容）  
   下载地址：[https://www.autohotkey.com/](https://www.autohotkey.com/)
-
----
 
 ## ⚙️ config.ini 配置指南
 
@@ -51,7 +45,7 @@
 
 ```ini
 [Hotkeys]
-WinCycler=!`       ; 多窗口循环切换（WinCycler）
+WinCycler=!` ; 多窗口循环切换（WinCycler）
 
 [Apps]
 F1=
@@ -60,6 +54,8 @@ F3=
 F4=
 F5=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
 F6=
+F7=
+F8=
 ```
 
 ### 常用符号
@@ -82,31 +78,18 @@ F6=
 F5=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
 ```
 
----
-
 ## ▶️ 使用方法
 
-1. 安装 AutoHotkey v2；
-2. 下载项目并保持目录结构不变；
-3. 编辑 config/config.ini；
-4. 配置你的快捷键；
-5. 添加你常用应用的路径；
-6. 运行脚本，脚本即刻生效，可在托盘看到运行图标。
-
-    ```bash
-    src/main.ahk
-    ```
-
-运行逻辑：
-
-- 按 F5：
-  - 如果应用未运行 → 启动
-  - 如果已运行 → 切换到上次窗口
-  - 如果已在前台 → 最小化所有窗口
-  - 通过修改 ini 即可动态增删快捷键。
-
----
+1. 安装 AutoHotkey v2，下载项目并保持目录结构不变运行`src/WinJuggler.ahk`（或直接下载并打开`WinJuggler.exe`）；
+2. 打开并编辑 `config.ini`，等待弹窗显示新配置加载完成；
+3. 按 F5
+   - 如果应用未运行 → 启动
+   - 如果已运行 → 切换到上次窗口
+   - 如果已在前台 → 最小化所有窗口
+4. 按 `Alt + ``（配置可改）
+   - 在同一应用的多个窗口间循环切换
 
 ## 🛠️ TODO
 
 - [ ] 为 config.ini 添加 UI
+- [ ] 适配文件资源管理器
