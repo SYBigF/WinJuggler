@@ -2,6 +2,30 @@
 
 class ConfigManager {
     static configPath := ""
+    
+    static defaultCfg := (
+        "[Hotkeys]`n"
+        "WinCycler=Alt+`n"
+        "ForceOpen=Shift`n"
+        "`n"
+        "[Apps]`n"
+        "F1=`n"
+        "F2=`n"
+        "F3=`n"
+        "F4=`n"
+        "F5=`n"
+        "F6=`n"
+        "F7=`n"
+        "F8=`n"
+        "F9=`n"
+    )
+
+    static MapModifiers := Map(
+        "ALT", "!",
+        "CTRL", "^",
+        "SHIFT", "+",
+        "WIN", "#"
+    )
 
     static GetConfigPath() {
         return A_IsCompiled
@@ -18,24 +42,72 @@ class ConfigManager {
         SplitPath(ConfigManager.configPath, , &dir)
         DirCreate(dir)
 
-        defaultCfg :=
-        (
-        "[Hotkeys]`n"
-        "WinCycler=!```n"
-        "`n"
-        "[Apps]`n"
-        "F1=`n"
-        "F2=`n"
-        "F3=`n"
-        "F4=`n"
-        "F5=`n"
-        "F6=`n"
-        "F7=`n"
-        "F8=`n"
-        "F9=`n"
-        )
+        FileAppend(ConfigManager.defaultCfg, ConfigManager.configPath, "UTF-8-RAW")
+    }
 
-        FileAppend(defaultCfg, ConfigManager.configPath, "UTF-8-RAW")
+    static Read(section, key, default := "") {
+        val := IniRead(ConfigManager.configPath, section, key, default)
+
+        if (val = "")
+            return ""
+
+        return ConfigManager.ParseFriendlyHotkey(val)
+    }
+
+    static ReadSection(section) {
+        result := Map()
+        try
+            raw := IniRead(ConfigManager.configPath, section)
+        catch
+            return result
+        lines := StrSplit(raw, "`n", "`r")
+
+        for line in lines {
+            if InStr(line, "=") {
+                pair := StrSplit(line, "=")
+                key := Trim(pair[1])
+                val := Trim(pair[2])
+                result[key] := val
+            }
+        }
+        return result
+    }
+
+    static ExtractExeName(path) {
+        SplitPath(path, , , &ext, &name)
+        return name "." ext
+    }
+
+    static ParseFriendlyHotkey(hkText) {
+        if hkText = ""
+            return ""
+
+        parts := StrSplit(StrReplace(hkText, " ", ""), "+")
+        mods := ""
+        key := ""
+
+        for part in parts {
+            up := StrUpper(part)
+
+            if ConfigManager.MapModifiers.Has(up) {
+                mods .= ConfigManager.MapModifiers[up]
+                continue
+            }
+
+            if RegExMatch(up, "^F([1-9]|1[0-9]|2[0-4])$") {
+                key := up
+                continue
+            }
+
+            if (StrLen(part) = 1) {
+                key := part
+                continue
+            }
+
+            key := part
+        }
+
+        return mods . key
     }
 }
 
