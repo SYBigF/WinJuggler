@@ -10,6 +10,7 @@ TraySetIcon(A_ScriptDir "\..\assets\app.ico")
 #Include "./features/config_manager.ahk"
 #Include "./features/app_switcher.ahk"
 #Include "./features/win_cycler.ahk"
+#Include "./features/adapt_explorer.ahk"
 
 #Include "./hotkeys/hotkeys.ahk"
 

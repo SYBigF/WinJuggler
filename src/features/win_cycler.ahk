@@ -15,7 +15,7 @@ class WinCycler {
         for hwnd in idList {
             if !(WinGetStyle(hwnd) & 0x10000000)
                 continue
-            if WinGetTitle(hwnd) = "" || WinGetTitle(hwnd) = "Program Manager"
+            if AdaptExplorer.checkExplorer(exeName, hwnd)
                 continue
             WinList.Push(hwnd)
         }

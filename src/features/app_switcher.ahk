@@ -19,7 +19,7 @@ class AppSwitcher {
             try {
                 if !(WinGetStyle(hwnd) & 0x10000000)
                     continue
-                if WinGetTitle(hwnd) = "" || WinGetTitle(hwnd) = "Program Manager"
+                if AdaptExplorer.checkExplorer(exeName, hwnd)
                     continue
                 WinList.Push(hwnd)
             } catch {
@@ -84,15 +84,14 @@ class AppWinFocuseRecorder {
             return
 
         try
-            exe := WinGetProcessName(hwnd)
+            exeName := WinGetProcessName(hwnd)
         catch
             return
 
-        if (exe = "explorer.exe")
-            if WinGetTitle(hwnd) = "" || WinGetTitle(hwnd) = "Program Manager"
+        if AdaptExplorer.checkExplorer(exeName, hwnd)
                 return
 
         AppWinFocuseRecorder.LastRecordedHwnd := hwnd
-        AppWinFocuseRecorder.LastFocused[exe] := hwnd
+        AppWinFocuseRecorder.LastFocused[exeName] := hwnd
     }
 }
