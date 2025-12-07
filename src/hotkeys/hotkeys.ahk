@@ -7,9 +7,6 @@ class HotkeyLoader {
         toggleWinKey := HotkeyLoader.Read("Hotkeys", "WinCycler", "")
         HotkeyLoader.BindHotkey(toggleWinKey, (*) => WinCycler.Cycle())
 
-        explorerKey := HotkeyLoader.Read("Hotkeys", "OpenExplorer", "")
-        HotkeyLoader.BindHotkey(explorerKey, (*) => Send("#e"))
-
         apps := HotkeyLoader.ReadSection("Apps")
         for hk, exePath in apps {
             if (exePath != "" && !FileExist(exePath)) {

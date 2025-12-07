@@ -17,8 +17,11 @@ class AppSwitcher {
         WinList := []
         for hwnd in idList {
             try {
-                if WinGetStyle(hwnd) & 0x10000000
-                    WinList.Push(hwnd)
+                if !(WinGetStyle(hwnd) & 0x10000000)
+                    continue
+                if WinGetTitle(hwnd) = "" || WinGetTitle(hwnd) = "Program Manager"
+                    continue
+                WinList.Push(hwnd)
             } catch {
                 continue
             }
@@ -31,12 +34,9 @@ class AppSwitcher {
 
         ArraySort(WinList)
 
-        try
-            activeExe := WinGetProcessName(active)
-        catch
-            activeExe := ""
+        isActiveAppWin := ArrayIndexOf(WinList, active)
 
-        if activeExe = exeName {
+        if (isActiveAppWin) {
             AppWinFocuseRecorder.IsMinimizing := true
             for hwnd in WinList {
                 try WinMinimize(hwnd)
@@ -60,12 +60,6 @@ class AppSwitcher {
 
         WinActivate(WinList[1])
     }
-
-    static Open(exeName, exePath) {
-        if !WinExist("ahk_exe " exeName) {
-            Run exePath
-        }
-    }
 }
 
 class AppWinFocuseRecorder {
@@ -81,21 +75,24 @@ class AppWinFocuseRecorder {
         if AppWinFocuseRecorder.IsMinimizing
             return
 
-        try hwnd := WinGetID("A")
-        catch {
+        try
+            hwnd := WinGetID("A")
+        catch
             return
-        }
 
         if hwnd = AppWinFocuseRecorder.LastRecordedHwnd
             return
 
-        AppWinFocuseRecorder.LastRecordedHwnd := hwnd
-
-        try exe := WinGetProcessName(hwnd)
-        catch {
+        try
+            exe := WinGetProcessName(hwnd)
+        catch
             return
-        }
 
+        if (exe = "explorer.exe")
+            if WinGetTitle(hwnd) = "" || WinGetTitle(hwnd) = "Program Manager"
+                return
+
+        AppWinFocuseRecorder.LastRecordedHwnd := hwnd
         AppWinFocuseRecorder.LastFocused[exe] := hwnd
     }
 }

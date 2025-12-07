@@ -13,8 +13,11 @@ class WinCycler {
 
         WinList := []
         for hwnd in idList {
-            if WinGetStyle(hwnd) & 0x10000000
-                WinList.Push(hwnd)
+            if !(WinGetStyle(hwnd) & 0x10000000)
+                continue
+            if WinGetTitle(hwnd) = "" || WinGetTitle(hwnd) = "Program Manager"
+                continue
+            WinList.Push(hwnd)
         }
 
         if WinList.Length < 2
