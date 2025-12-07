@@ -7,6 +7,8 @@ class HotkeyLoader {
         toggleWinKey := HotkeyLoader.Read("Hotkeys", "WinCycler", "")
         HotkeyLoader.BindHotkey(toggleWinKey, (*) => WinCycler.Cycle())
 
+        forceOpenKey := HotkeyLoader.Read("Hotkeys", "ForceOpen", "")
+
         apps := HotkeyLoader.ReadSection("Apps")
         for hk, exePath in apps {
             if (exePath != "" && !FileExist(exePath)) {
@@ -14,8 +16,12 @@ class HotkeyLoader {
                 continue
             }
             exeName := HotkeyLoader.ExtractExeName(exePath)
-            handler := HotkeyLoader.MakeHandler(exeName, exePath)
+            handler := AppSwitcher.MakeSitchHandler(exeName, exePath)
             HotkeyLoader.BindHotkey(hk, handler)
+
+            forceOpenhk := forceOpenKey hk
+            handler := AppSwitcher.MakeOpenHandler(exePath)
+            HotkeyLoader.BindHotkey(forceOpenhk, handler)
         }
     }
 
@@ -29,10 +35,6 @@ class HotkeyLoader {
         } catch {
             TrayTip("无效热键", "Hotkey: " hk " 无法绑定", Icon := 3)
         }
-    }
-
-    static MakeHandler(exeName, exePath) {
-        return (*) => AppSwitcher.Switch(exeName, exePath)
     }
 
     static Read(section, key, default := "") {

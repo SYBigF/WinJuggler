@@ -5,7 +5,7 @@ class AppSwitcher {
         idList := WinGetList("ahk_exe " exeName)
 
         if idList.Length = 0 {
-            Run exePath
+            AppSwitcher.open(exePath)
             return
         }
 
@@ -25,11 +25,6 @@ class AppSwitcher {
             } catch {
                 continue
             }
-        }
-
-        if WinList.Length = 0 {
-            Run exePath
-            return
         }
 
         ArraySort(WinList)
@@ -59,6 +54,18 @@ class AppSwitcher {
         }
 
         WinActivate(WinList[1])
+    }
+
+    static open(exePath) {
+        Run exePath
+    }
+
+    static MakeSitchHandler(exeName, exePath) {
+        return (*) => AppSwitcher.Switch(exeName, exePath)
+    }
+
+    static MakeOpenHandler(exePath) {
+        return (*) => AppSwitcher.open(exePath)
     }
 }
 
