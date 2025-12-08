@@ -4,13 +4,17 @@ class HotkeyLoader {
     static RegisteredHotkeys := []
 
     static Load() {
-        toggleWinKey := ConfigManager.Read("Hotkeys", "WinCycler", "")
-        HotkeyLoader.BindHotkey(toggleWinKey, (*) => WinCycler.Cycle())
+        winCycleKeyVal := ConfigManager.Read("Hotkeys", "WinCycler", "")
+        winCycleKey := ConfigManager.ParseFriendlyHotkey(winCycleKeyVal)
+        HotkeyLoader.BindHotkey(winCycleKey, (*) => WinCycler.Cycle())
 
-        forceOpenKey := ConfigManager.Read("Hotkeys", "ForceOpen", "")
-
+        forceOpenKeyVal := ConfigManager.Read("Hotkeys", "ForceOpen", "")
+        forceOpenKey := ConfigManager.ParseFriendlyHotkey(forceOpenKeyVal)
         apps := ConfigManager.ReadSection("Apps")
-        for hk, exePath in apps {
+        for hkVal, exePath in apps {
+            if (hkVal = "" || exePath = "")
+                continue
+            hk := ConfigManager.ParseFriendlyHotkey(hkVal)
             if (exePath != "" && !FileExist(exePath)) {
                 TrayTip("应用路径无效", hk ": " exePath " 不存在", Icon := 3)
                 continue
@@ -23,6 +27,22 @@ class HotkeyLoader {
             handler := AppSwitcher.MakeOpenHandler(exePath)
             HotkeyLoader.BindHotkey(forceOpenhk, handler)
         }
+
+        replaceHotKeys := ConfigManager.ReadSection("HKReplace")
+        for hkVal, replaceHotKeyVal in replaceHotKeys{
+            hk := ConfigManager.ParseFriendlyHotkey(hkVal)
+            replaceHotKey := ConfigManager.ParseFriendlyHotkey(replaceHotKeyVal)
+            handler := HotkeyLoader.MakeReplaceHotKeyHandler(replaceHotKey)
+            HotkeyLoader.BindHotkey(hk, handler)
+        }
+    }
+
+    static replaceHotKey(hk) {
+        Send(hk)
+    }
+
+    static MakeReplaceHotKeyHandler(hk) {
+        return (*) => HotkeyLoader.replaceHotKey(hk)
     }
 
     static BindHotkey(hk, func) {

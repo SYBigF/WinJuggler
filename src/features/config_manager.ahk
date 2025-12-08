@@ -18,6 +18,10 @@ class ConfigManager {
         "F7=`n"
         "F8=`n"
         "F9=`n"
+        "`n"
+        "[HKReplace]`n"
+        "Ctrl+F1=Hi! WinJuggler`n"
+        "Ctrl+Alt+1={Ctrl+F1}`n"
     )
 
     static MapModifiers := Map(
@@ -46,30 +50,76 @@ class ConfigManager {
     }
 
     static Read(section, key, default := "") {
-        val := IniRead(ConfigManager.configPath, section, key, default)
+        txt := FileRead(ConfigManager.configPath, "UTF-8")
 
-        if (val = "")
-            return ""
+        if SubStr(txt, 1, 1) = Chr(0xFEFF)
+            txt := SubStr(txt, 2)
 
-        return ConfigManager.ParseFriendlyHotkey(val)
+        current := ""
+
+        for line in StrSplit(txt, "`n", "`r") {
+            line := Trim(line)
+
+            if (line = "" || SubStr(line, 1, 1) = ";")
+                continue
+
+            if RegExMatch(line, "^\[(.+?)\]$", &m) {
+                current := m[1]
+                continue
+            }
+
+            if (current = section && InStr(line, "=")) {
+                parts := StrSplit(line, "=")
+                if (Trim(parts[1]) = key)
+                    return Trim(parts[2])
+            }
+        }
+
+        return default
     }
 
     static ReadSection(section) {
         result := Map()
-        try
-            raw := IniRead(ConfigManager.configPath, section)
-        catch
-            return result
-        lines := StrSplit(raw, "`n", "`r")
 
-        for line in lines {
-            if InStr(line, "=") {
-                pair := StrSplit(line, "=")
-                key := Trim(pair[1])
-                val := Trim(pair[2])
-                result[key] := val
+        txt := FileRead(ConfigManager.configPath, "UTF-8")
+
+        if SubStr(txt, 1, 1) = Chr(0xFEFF)
+            txt := SubStr(txt, 2)
+
+        current := ""
+        buffer := ""
+
+        for line in StrSplit(txt, "`n", "`r") {
+            line := Trim(line)
+
+            if (line = "" || SubStr(line, 1, 1) = ";")
+                continue
+
+            if RegExMatch(line, "^\[(.+?)\]$", &m) {
+                current := m[1]
+                continue
+            }
+
+            if (current = section) {
+                if InStr(line, "=")
+                    buffer .= line "`n"
             }
         }
+
+        if (buffer = "")
+            return result
+
+        for line in StrSplit(buffer, "`n", "`r") {
+            if !InStr(line, "=")
+                continue
+
+            parts := StrSplit(line, "=")
+            key := Trim(parts[1])
+            val := Trim(parts[2])
+
+            result[key] := val
+        }
+
         return result
     }
 

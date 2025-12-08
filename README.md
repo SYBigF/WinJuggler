@@ -38,7 +38,7 @@
 ## 📦 环境要求
 
 - Windows 10 / 11
-- **AutoHotkey v2**（必须是 v2，v1 不兼容） 
+- **AutoHotkey v2**（必须是 v2，v1 不兼容）
   下载地址：[https://www.autohotkey.com/](https://www.autohotkey.com/)
 
 ## ⚙️ config.ini 配置指南
