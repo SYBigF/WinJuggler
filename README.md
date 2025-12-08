@@ -17,13 +17,17 @@
 - 对同一应用的多个窗口进行轮换（如浏览器、编辑器）
 - 类似精准版 Alt+Tab，但不混入其他应用
 
-### ⚙️ 3. 外部配置（config.ini）
+### 🔄 3. 替换热键（Hotkey Replace）
+
+- 支持将一个热键替换为另一个热键，方便自定义快捷操作
+
+### ⚙️ 4. 外部配置（config.ini）
 
 - 所有快捷键、应用路径全部写在 `config.ini`
 - 无需修改代码即可扩展应用列表
 - 支持自定义多个快速启动键位
 
-### 🧩 4. 模块化架构（可扩展）
+### 🧩 5. 模块化架构（可扩展）
 
 项目按功能拆分为多个模块：
 
@@ -59,13 +63,23 @@ F5=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
 F6=
 F7=
 F8=
+
+[HKReplace]
+Ctrl+F1=Hi! WinJuggler
+Ctrl+Alt+1={Ctrl+F1}
 ```
 
-格式：热键=程序完整路径
+### Apps 部分
+
+定义应用快捷键与程序路径的映射关系。格式：热键=程序完整路径
 
 ```ini
 F5=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
 ```
+
+### HKReplace 部分
+
+定义热键替换关系。格式：热键=替换内容/替换热键，内容直接填写，热键用大括号包裹。
 
 ## ▶️ 使用方法
 
