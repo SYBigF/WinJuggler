@@ -3,7 +3,11 @@
 
 SetWorkingDir A_ScriptDir
 
-TraySetIcon(A_ScriptDir "\..\assets\app.ico")
+if A_IsCompiled {
+    TraySetIcon(A_ScriptFullPath)
+} else {
+    TraySetIcon(A_ScriptDir "/../assets/app.ico")
+}
 
 #Include "./core/array_utils.ahk"
 
