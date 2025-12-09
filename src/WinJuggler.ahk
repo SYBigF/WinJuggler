@@ -14,7 +14,7 @@ if A_IsCompiled {
 #Include "./features/config_manager.ahk"
 #Include "./features/app_switcher.ahk"
 #Include "./features/win_cycler.ahk"
-#Include "./features/adapt_explorer.ahk"
+#Include "./features/adapt_special_app.ahk"
 
 #Include "./hotkeys/hotkeys.ahk"
 
