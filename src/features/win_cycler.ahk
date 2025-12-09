@@ -13,11 +13,11 @@ class WinCycler {
 
         WinList := []
         for hwnd in idList {
-            if !(WinGetStyle(hwnd) & 0x10000000)
+            try {
+                if WinGetStyle(hwnd) & 0x10000000 && !AdaptSpecialAPP.isEmptySpecialAPP(exeName, hwnd)
+                    WinList.Push(hwnd)
+            } catch
                 continue
-            if AdaptExplorer.checkExplorer(exeName, hwnd)
-                continue
-            WinList.Push(hwnd)
         }
 
         if WinList.Length < 2

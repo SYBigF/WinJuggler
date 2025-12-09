@@ -3,38 +3,38 @@
 class AppSwitcher {
     static Switch(exeName, exePath) {
         idList := WinGetList("ahk_exe " exeName)
-
-        if idList.Length = 0 {
+        
+        if idList.Length == 0 || AdaptSpecialAPP.openFirstSpecialAPP(idList, exeName) {
             AppSwitcher.open(exePath)
             return
         }
+    
+        WinList := []
+        for hwnd in idList {
+            try {
+                if WinGetStyle(hwnd) & 0x10000000 && !AdaptSpecialAPP.isEmptySpecialAPP(exeName, hwnd)
+                    WinList.Push(hwnd)
+            } catch
+                continue
+        }
+        
+        if WinList.Length = 0
+            return
 
+        ArraySort(WinList)
         try
             active := WinGetID("A")
         catch
             active := 0
-
-        WinList := []
-        for hwnd in idList {
-            try {
-                if !(WinGetStyle(hwnd) & 0x10000000)
-                    continue
-                if AdaptExplorer.checkExplorer(exeName, hwnd)
-                    continue
-                WinList.Push(hwnd)
-            } catch {
-                continue
-            }
-        }
-
-        ArraySort(WinList)
-
         isActiveAppWin := ArrayIndexOf(WinList, active)
 
         if (isActiveAppWin) {
             AppWinFocuseRecorder.IsMinimizing := true
             for hwnd in WinList {
-                try WinMinimize(hwnd)
+                try
+                    WinMinimize(hwnd)
+                catch
+                    return
             }
             Sleep 10
             AppWinFocuseRecorder.IsMinimizing := false
@@ -43,7 +43,6 @@ class AppSwitcher {
 
         if AppWinFocuseRecorder.LastFocused.Has(exeName) {
             last := AppWinFocuseRecorder.LastFocused[exeName]
-
             if ArrayIndexOf(WinList, last) {
                 try
                     WinActivate(last)
@@ -95,8 +94,8 @@ class AppWinFocuseRecorder {
         catch
             return
 
-        if AdaptExplorer.checkExplorer(exeName, hwnd)
-                return
+        if AdaptSpecialAPP.isEmptySpecialAPP(exeName, hwnd)
+            return
 
         AppWinFocuseRecorder.LastRecordedHwnd := hwnd
         AppWinFocuseRecorder.LastFocused[exeName] := hwnd
