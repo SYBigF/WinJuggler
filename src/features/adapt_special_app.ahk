@@ -2,8 +2,7 @@
 
 class AdaptSpecialAPP {
     static isEmptySpecialAPP(exeName, hwnd) {
-        if AdaptSpecialAPP.isEmptyTitelName(hwnd) ||
-            AdaptExplorer.isEmptyExplorer(exeName, hwnd) || 
+        if AdaptExplorer.isEmptyExplorer(exeName, hwnd) || 
             AdaptWXWork.isEmptyWeMail(exeName, hwnd)
             return true
         else
@@ -37,7 +36,7 @@ class AdaptExplorer {
     }
 
     static isEmptyExplorer(exeName, hwnd) {
-        if AdaptExplorer.isExplorer(exeName) && (WinGetTitle(hwnd) = "" ||
+        if AdaptExplorer.isExplorer(exeName) && (AdaptSpecialAPP.isEmptyTitelName(hwnd) ||
             WinGetTitle(hwnd) = "Program Manager")
             return true
         else
